@@ -319,7 +319,6 @@
         .right-panel {
             display: flex; flex-direction: column; gap: 14px;
         }
-        .index-card { }
         .index-big {
             font-family: 'JetBrains Mono', monospace;
             font-size: 42px; font-weight: 800;
