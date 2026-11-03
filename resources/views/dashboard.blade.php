@@ -280,9 +280,28 @@
         </main>
 
         <footer class="site-footer">
-            <div class="footer-brand"><strong>JALAS<span>.</span></strong><span>Forest Fire Early Warning &amp; Monitoring System</span></div>
-            <p>Dashboard pemantauan potensi kebakaran hutan <span>·</span> Informasi ditampilkan sesuai data perangkat yang tersedia.</p>
-            <a href="#dashboard" class="back-to-top">Kembali ke atas ↑</a>
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <strong>JALAS</strong>
+                    <span>// JAGA ALAS COMMAND CENTER</span>
+                </div>
+                <p class="footer-description">Sistem komando dan pemantauan telemetri kebakaran hutan terintegrasi. Dirancang untuk stasiun<br class="footer-description-break"> pengawas lapangan, jagawana, dan badan penanggulangan bencana regional.</p>
+                <small class="footer-meta">© 2025 JALAS FORESTRY INITIATIVE <span>•</span> TELEMETRI LORAWAN FREQ: 915.00 MHZ <span>•</span> REFRESH CYCLE: 5 DETIK</small>
+            </div>
+
+            <aside class="footer-contact" aria-label="Informasi kontak darurat dan koordinasi">
+                <div class="footer-hotline">
+                    <span class="footer-hotline-icon" aria-hidden="true">✱</span>
+                    <div class="footer-contact-copy">
+                        <strong class="footer-contact-label">HOTLINE SIAGA DARURAT KARHUTLA</strong>
+                        <p class="footer-hotline-number"><a href="tel:117">117</a><span>/</span><a href="tel:+62761582901">(0761) 582-901</a></p>
+                    </div>
+                </div>
+                <div class="footer-coordination">
+                    <strong class="footer-contact-label">POSKO INDUK KOORDINASI</strong>
+                    <span>Sektor Riau <span>•</span> Pos Ranger Rimba 03</span>
+                </div>
+            </aside>
         </footer>
     </div>
 </body>
