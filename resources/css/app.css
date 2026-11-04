@@ -496,7 +496,7 @@ a {
 }
 
 .overview-grid {
-    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    grid-template-columns: minmax(320px, 1.2fr) minmax(250px, 0.8fr);
 }
 
 .panel {
@@ -1516,7 +1516,7 @@ a {
     }
 
     .overview-grid {
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
+        grid-template-columns: minmax(320px, 1.2fr) minmax(250px, 0.8fr);
     }
 
     .nav-link {

@@ -91,34 +91,6 @@
             </section>
 
             <section class="overview-grid">
-                <article class="panel map-panel" id="peta">
-                    <div class="panel-heading">
-                        <div>
-                            <p class="eyebrow">PEMANTAUAN WILAYAH</p>
-                            <h2>Peta Taktis Operasional</h2>
-                        </div>
-                        <span class="panel-tag"><span class="status-dot status-dot-muted"></span> 03 TITIK</span>
-                    </div>
-
-                    <div class="map-canvas" role="img" aria-label="Ilustrasi area pemantauan dengan tiga titik sensor">
-                        <div class="map-label map-label-top">AREA PEMANTAUAN · ILUSTRASI</div>
-                        <svg class="map-art" viewBox="0 0 760 310" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                            <path class="map-contour" d="M-20 62C95 13 140 107 249 65S431 6 537 64s158 31 246-4M-32 119c104-49 171 40 270 3s165-67 258-8 168 41 290-9M-14 189c110-54 159 32 262-4s178-61 268-7 160 50 260 2M-18 252c114-49 184 28 277-9s174-49 268-4 168 37 248-3" />
-                            <path class="map-water" d="M-15 265c95-18 140-60 225-43s122 42 195 12 111-72 190-67 108 33 190 6" />
-                            <path class="map-road road-main" d="M43 40c94 45 113 68 204 91s128 28 196 69 102 57 178 63 107 1 152-21" />
-                            <path class="map-road road-secondary" d="M91 290c35-66 77-89 149-119s113-31 173-61 83-53 137-84" />
-                            <path class="map-road road-secondary" d="M4 155c73 2 118-10 176-45s81-61 114-107" />
-                            <g class="map-pin" transform="translate(252 131)"><circle r="16"/><circle class="pin-center" r="5"/><text y="34">SENSOR 01</text></g>
-                            <g class="map-pin map-pin-alert" transform="translate(472 202)"><circle r="19"/><circle class="pin-center" r="6"/><text y="38">TITIK PANTAU</text></g>
-                            <g class="map-pin" transform="translate(586 95)"><circle r="16"/><circle class="pin-center" r="5"/><text y="34">SENSOR 02</text></g>
-                            <g class="map-compass" transform="translate(708 49)"><text x="0" y="-13">U</text><path d="M0-8 6 7 0 4-6 7Z"/></g>
-                        </svg>
-                        <div class="map-scale"><span></span><small>Ilustrasi · lokasi belum terhubung</small></div>
-                        <div class="map-legend"><span><i class="legend-sensor"></i> Sensor</span><span><i class="legend-center"></i> Titik pantau</span></div>
-                    </div>
-                    <div class="panel-foot"><span>⌖ Lokasi perangkat akan muncul saat sensor terhubung</span><span class="foot-muted">PETA ILUSTRATIF</span></div>
-                </article>
-
                 <article class="panel camera-panel" id="kamera">
                     <div class="panel-heading">
                         <div>
@@ -153,6 +125,34 @@
                         </div>
                     </div>
                     <div class="camera-caption"><span><i></i> Tidak ada sinyal kamera</span><span>TERAKHIR DIPERBARUI —</span></div>
+                </article>
+
+                <article class="panel map-panel" id="peta">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">PEMANTAUAN WILAYAH</p>
+                            <h2>Peta Taktis Operasional</h2>
+                        </div>
+                        <span class="panel-tag"><span class="status-dot status-dot-muted"></span> 03 TITIK</span>
+                    </div>
+
+                    <div class="map-canvas" role="img" aria-label="Ilustrasi area pemantauan dengan tiga titik sensor">
+                        <div class="map-label map-label-top">AREA PEMANTAUAN · ILUSTRASI</div>
+                        <svg class="map-art" viewBox="0 0 760 310" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                            <path class="map-contour" d="M-20 62C95 13 140 107 249 65S431 6 537 64s158 31 246-4M-32 119c104-49 171 40 270 3s165-67 258-8 168 41 290-9M-14 189c110-54 159 32 262-4s178-61 268-7 160 50 260 2M-18 252c114-49 184 28 277-9s174-49 268-4 168 37 248-3" />
+                            <path class="map-water" d="M-15 265c95-18 140-60 225-43s122 42 195 12 111-72 190-67 108 33 190 6" />
+                            <path class="map-road road-main" d="M43 40c94 45 113 68 204 91s128 28 196 69 102 57 178 63 107 1 152-21" />
+                            <path class="map-road road-secondary" d="M91 290c35-66 77-89 149-119s113-31 173-61 83-53 137-84" />
+                            <path class="map-road road-secondary" d="M4 155c73 2 118-10 176-45s81-61 114-107" />
+                            <g class="map-pin" transform="translate(252 131)"><circle r="16"/><circle class="pin-center" r="5"/><text y="34">SENSOR 01</text></g>
+                            <g class="map-pin map-pin-alert" transform="translate(472 202)"><circle r="19"/><circle class="pin-center" r="6"/><text y="38">TITIK PANTAU</text></g>
+                            <g class="map-pin" transform="translate(586 95)"><circle r="16"/><circle class="pin-center" r="5"/><text y="34">SENSOR 02</text></g>
+                            <g class="map-compass" transform="translate(708 49)"><text x="0" y="-13">U</text><path d="M0-8 6 7 0 4-6 7Z"/></g>
+                        </svg>
+                        <div class="map-scale"><span></span><small>Ilustrasi · lokasi belum terhubung</small></div>
+                        <div class="map-legend"><span><i class="legend-sensor"></i> Sensor</span><span><i class="legend-center"></i> Titik pantau</span></div>
+                    </div>
+                    <div class="panel-foot"><span>⌖ Lokasi perangkat akan muncul saat sensor terhubung</span><span class="foot-muted">PETA ILUSTRATIF</span></div>
                 </article>
             </section>
 
