@@ -1,3 +1,5 @@
+import { initializeLiveCamera } from './camera.js';
+
 const timeFormatter = new Intl.DateTimeFormat('id-ID', {
     hour: '2-digit',
     minute: '2-digit',
@@ -50,6 +52,10 @@ function initializeDashboardNavigation() {
     });
 }
 
+// Inisialisasi komponen dashboard
 updateDashboardClock();
 window.setInterval(updateDashboardClock, 1000);
 initializeDashboardNavigation();
+
+// Inisialisasi modul kamera & live deteksi AI
+initializeLiveCamera();
