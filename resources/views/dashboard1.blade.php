@@ -100,6 +100,50 @@
                             <p class="eyebrow">PENGAWASAN VISUAL</p>
                             <h2>Kamera Hutan</h2>
                         </div>
+<<<<<<< HEAD
+                        <span class="camera-state" data-camera-state><i></i><span data-camera-state-label>OFFLINE</span></span>
+                    </div>
+                    <div class="camera-controls">
+                        <label for="camera-device">Kamera laptop / USB</label>
+                        <select id="camera-device" data-camera-device>
+                            <option value="">Kamera default browser</option>
+                        </select>
+                        <button class="camera-toggle" type="button" data-camera-toggle>Aktifkan kamera</button>
+                    </div>
+                    <p class="camera-feedback" data-camera-feedback role="status" aria-live="polite">
+                        Pilih kamera, lalu tekan Aktifkan kamera dan izinkan akses saat diminta browser.
+                    </p>
+                    <div class="camera-scene" role="group" aria-label="Pratinjau kamera hutan">
+                        <video class="camera-video" data-camera-video aria-label="Tayangan langsung kamera hutan" autoplay muted playsinline hidden></video>
+                        <canvas class="camera-detections" data-camera-detections aria-hidden="true" hidden></canvas>
+                        <svg data-camera-placeholder viewBox="0 0 520 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b9c9ad"/><stop offset="1" stop-color="#e4d9ac"/></linearGradient>
+                                <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#687a54"/><stop offset="1" stop-color="#344b38"/></linearGradient>
+                                <linearGradient id="forest" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#617148"/><stop offset="1" stop-color="#243d2b"/></linearGradient>
+                            </defs>
+                            <rect width="520" height="280" fill="url(#sky)"/>
+                            <circle cx="407" cy="57" r="25" fill="#efe4b9" opacity=".8"/>
+                            <path d="M0 152 77 91l53 44 72-77 78 87 70-61 67 65 54-41 49 37v135H0Z" fill="#889173" opacity=".7"/>
+                            <path d="m0 173 88-64 61 51 77-84 91 89 55-55 65 50 49-41 34 29v132H0Z" fill="url(#ridge)"/>
+                            <path d="M0 189q91-44 168-11t155-3 197 8v97H0Z" fill="#9a9564"/>
+                            <path d="M0 211q79-38 169-4t174-9 177 1v81H0Z" fill="url(#forest)"/>
+                            <g fill="#263d2d">
+                                <path d="m27 222 18-61 18 61h-12l18 42H20l18-42Zm70 1 19-72 20 72h-13l18 42H80l18-42Zm278-13 22-70 23 70h-15l21 49h-56l20-49Zm81 4 18-61 20 61h-12l18 42h-50l18-42Z"/>
+                            </g>
+                            <path d="M0 263q106-19 194 0t178-3 148 0v20H0Z" fill="#1e3426" opacity=".8"/>
+                        </svg>
+                        <div class="scene-overlay" data-camera-overlay hidden><span class="record-dot"></span> LIVE FEED <span>CAM-01</span></div>
+                        <div class="camera-message" data-camera-placeholder-message>
+                            <span class="camera-message-icon" aria-hidden="true">▣</span>
+                            <strong>Kamera belum terhubung</strong>
+                            <small>Gunakan kamera laptop atau kamera USB yang terhubung ke perangkat ini.</small>
+                        </div>
+                    </div>
+                    <div class="camera-caption" data-camera-caption>
+                        <span data-camera-caption-status><i></i> Tidak ada sinyal kamera</span>
+                        <span data-camera-updated>TERAKHIR DIPERBARUI —</span>
+=======
                         <div class="camera-controls">
                             <!-- Dropdown Pemilihan Kamera -->
                             <select id="camera-device-select" class="camera-select" title="Pilih sumber kamera">
@@ -153,6 +197,7 @@
                     <div class="camera-caption">
                         <span id="camera-footer-status"><i></i> Tidak ada sinyal kamera</span>
                         <span id="camera-last-update">TERAKHIR DIPERBARUI —</span>
+>>>>>>> d23f08c4ea981de28795f8809ed1d91216b3a7a3
                     </div>
                 </article>
 
@@ -170,7 +215,20 @@
                         <div id="hotspot-map" class="hotspot-map" role="region" aria-label="Peta interaktif hotspot kebakaran hutan"></div>
                         <div id="hotspot-map-status" class="map-message" role="status" aria-live="polite">Memuat hotspot SIPONGI...</div>
                     </div>
+<<<<<<< HEAD:resources/views/dashboard.blade.php
                     <div class="panel-foot"><span id="hotspot-summary" aria-live="polite">Memuat data hotspot dari SIPONGI...</span><span class="foot-muted">SUMBER: SIPONGI</span></div>
+=======
+                    <section class="map-detection-status is-idle" data-detection-status role="status" aria-live="polite">
+                        <span class="detection-status-icon" data-detection-status-icon aria-hidden="true">!</span>
+                        <div class="detection-status-copy">
+                            <p class="eyebrow">HASIL DETEKSI KAMERA</p>
+                            <h3 data-detection-status-title>Kamera belum aktif</h3>
+                            <p data-detection-status-detail>Aktifkan kamera untuk memulai deteksi api dan asap otomatis.</p>
+                        </div>
+                        <span class="detection-status-time" data-detection-status-time>MENUNGGU</span>
+                    </section>
+                    <div class="panel-foot"><span>⌖ Lokasi perangkat akan muncul saat sensor terhubung</span><span class="foot-muted">PETA ILUSTRATIF</span></div>
+>>>>>>> 010ce066c9eaa0051649ad75511f7c17a77c3fc3:resources/views/dashboard1.blade.php
                 </article>
             </section>
 

@@ -504,6 +504,11 @@ a {
     overflow: hidden;
 }
 
+.map-panel {
+    display: flex;
+    flex-direction: column;
+}
+
 .panel-heading {
     display: flex;
     align-items: center;
@@ -640,6 +645,89 @@ a {
     font-size: 9px;
 }
 
+.map-detection-status {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+    min-height: 120px;
+    padding: 18px;
+    border-top: 1px solid #e6dfc3;
+    background: #f8f5e8;
+    color: #53644b;
+}
+
+.detection-status-icon {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.detection-status-copy {
+    display: grid;
+    flex: 1;
+    gap: 5px;
+}
+
+.detection-status-copy .eyebrow {
+    margin: 0;
+}
+
+.detection-status-copy h3 {
+    margin: 0;
+    color: var(--forest);
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.detection-status-copy > p:last-child {
+    margin: 0;
+    color: #697363;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.detection-status-time {
+    align-self: flex-start;
+    color: #8f896b;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.map-detection-status.is-checking {
+    background: #fbf6df;
+    color: #8b792c;
+}
+
+.map-detection-status.is-clear {
+    background: #edf3e6;
+    color: #497a4e;
+}
+
+.map-detection-status.is-smoke {
+    background: #fbf1d8;
+    color: #a57619;
+}
+
+.map-detection-status.is-fire,
+.map-detection-status.is-error {
+    background: #fbefdf;
+    color: #a33e32;
+}
+
+.map-detection-status.is-fire .detection-status-copy h3,
+.map-detection-status.is-error .detection-status-copy h3 {
+    color: #8f3329;
+}
+
 .foot-muted,
 .chart-foot {
     color: #8f896b;
@@ -658,8 +746,88 @@ a {
 .camera-caption i {
     width: 6px;
     height: 6px;
+    flex: 0 0 auto;
     border-radius: 50%;
     background: #a07b50;
+}
+
+.camera-state.is-active {
+    border-color: #b8cfad;
+    background: #e8f0df;
+    color: #416a44;
+}
+
+.camera-state.is-active i {
+    background: #4d8850;
+}
+
+.camera-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e6dfc3;
+    background: #fbf6df;
+}
+
+.camera-controls label {
+    color: #65705a;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.camera-controls select,
+.camera-toggle {
+    min-height: 32px;
+    border: 1px solid #d7ceaa;
+    border-radius: 4px;
+    background: #fffdf2;
+    color: var(--ink);
+    font: inherit;
+    font-size: 10px;
+}
+
+.camera-controls select {
+    min-width: 0;
+    padding: 0 8px;
+}
+
+.camera-toggle {
+    padding: 0 11px;
+    border-color: var(--forest-mid);
+    background: var(--forest-mid);
+    color: #fffdf0;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.camera-toggle:hover:not(:disabled) {
+    background: var(--forest);
+}
+
+.camera-controls select:focus-visible,
+.camera-toggle:focus-visible {
+    outline: 2px solid #b39224;
+    outline-offset: 2px;
+}
+
+.camera-toggle:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.camera-feedback {
+    margin: 0;
+    padding: 6px 12px;
+    background: #f8f2d9;
+    color: #73785f;
+    font-size: 9px;
+}
+
+.camera-feedback.is-error {
+    background: #fbefdf;
+    color: #8c483a;
 }
 
 .camera-scene {
@@ -668,10 +836,33 @@ a {
     background: #334833;
 }
 
-.camera-scene > svg {
+.camera-scene > svg,
+.camera-scene > video {
     display: block;
     width: 100%;
     aspect-ratio: 520 / 280;
+}
+
+.camera-scene > svg[hidden],
+.camera-scene > video[hidden] {
+    display: none;
+}
+
+.camera-scene > video {
+    object-fit: cover;
+}
+
+.camera-detections {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.camera-detections[hidden] {
+    display: none;
 }
 
 .scene-overlay {
@@ -688,6 +879,10 @@ a {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-shadow: 0 1px 3px #000;
+}
+
+.scene-overlay[hidden] {
+    display: none;
 }
 
 .scene-overlay > span:last-child {
@@ -738,6 +933,14 @@ a {
 
 .camera-caption i {
     background: #bb5140;
+}
+
+.camera-caption.is-active {
+    color: #416a44;
+}
+
+.camera-caption.is-active i {
+    background: #4d8850;
 }
 
 .table-wrap {
@@ -1611,6 +1814,16 @@ a {
         align-items: flex-start;
         flex-direction: column;
         gap: 4px;
+    }
+
+    .camera-controls {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+    }
+
+    .camera-controls select,
+    .camera-toggle {
+        width: 100%;
     }
 
     .table-note > span:last-child {
