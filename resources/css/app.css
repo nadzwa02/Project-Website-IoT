@@ -545,156 +545,85 @@ a {
 
 .map-canvas {
     position: relative;
-    min-height: 250px;
-    overflow: hidden;
-    background-color: #eae5c9;
-    background-image:
-        linear-gradient(25deg, transparent 47%, rgb(148 145 99 / 17%) 48%, transparent 49%),
-        linear-gradient(145deg, transparent 47%, rgb(148 145 99 / 13%) 48%, transparent 49%),
-        radial-gradient(ellipse at 42% 60%, rgb(129 145 92 / 18%), transparent 58%);
-}
-
-.map-canvas::before,
-.map-canvas::after {
-    position: absolute;
-    width: 150%;
-    height: 1px;
-    background: rgb(133 132 94 / 22%);
-    content: '';
-    transform: rotate(-13deg);
-}
-
-.map-canvas::before {
-    top: 37%;
-    left: -20%;
-    box-shadow: 0 37px 0 rgb(133 132 94 / 15%), 0 78px 0 rgb(133 132 94 / 15%);
-}
-
-.map-canvas::after {
-    top: 66%;
-    left: -15%;
-    transform: rotate(17deg);
-}
-
-.map-label {
-    position: absolute;
-    z-index: 1;
-    top: 11px;
-    left: 13px;
-    color: #757550;
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-}
-
-.map-art {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
     height: 250px;
+    overflow: hidden;
+    background: #eae5c9;
 }
 
-.map-contour {
-    fill: none;
-    stroke: #c8c39c;
-    stroke-width: 1.2;
+.hotspot-map {
+    z-index: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.map-water {
-    fill: none;
-    stroke: #8fa99b;
-    stroke-width: 4;
-    opacity: 0.65;
-}
-
-.map-road {
-    fill: none;
-    stroke: #fff9df;
-    stroke-width: 4;
-}
-
-.road-secondary {
-    stroke: #d3cba4;
-    stroke-width: 2;
-}
-
-.map-pin circle:first-child {
-    fill: rgb(63 111 68 / 20%);
-    stroke: #497a4e;
-    stroke-width: 2;
-}
-
-.map-pin .pin-center {
-    fill: #497a4e;
-}
-
-.map-pin text,
-.map-compass {
-    fill: #3a5339;
-    font-family: Inter, sans-serif;
-    font-size: 9px;
-    font-weight: 800;
-    text-anchor: middle;
-}
-
-.map-pin-alert circle:first-child {
-    fill: rgb(191 64 48 / 17%);
-    stroke: #b84234;
-}
-
-.map-pin-alert .pin-center {
-    fill: #b84234;
-}
-
-.map-compass path {
-    fill: #667351;
-}
-
-.map-scale,
-.map-legend {
+.map-message {
     position: absolute;
-    z-index: 2;
-    bottom: 10px;
-    display: flex;
-    align-items: center;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    max-width: calc(100% - 32px);
+    padding: 8px 12px;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: rgb(255 249 223 / 94%);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 650;
+    text-align: center;
+    box-shadow: var(--shadow);
+    pointer-events: none;
+}
+
+.map-message[hidden] {
+    display: none;
+}
+
+.hotspot-popup {
+    display: grid;
+    min-width: 180px;
     gap: 7px;
-    color: #666b51;
-    font-size: 8px;
+    color: var(--ink);
+    font-family: Inter, 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 11px;
 }
 
-.map-scale {
-    left: 13px;
+.hotspot-popup > strong {
+    color: var(--red);
+    font-size: 12px;
 }
 
-.map-scale > span {
-    width: 24px;
-    height: 3px;
-    border-right: 1px solid #68704f;
-    border-left: 1px solid #68704f;
-    background: #68704f;
+.hotspot-popup-row {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
 }
 
-.map-legend {
-    right: 12px;
-    gap: 10px;
+.hotspot-popup-label {
+    color: var(--muted);
 }
 
-.map-legend > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+.hotspot-popup-value {
+    font-weight: 650;
+    overflow-wrap: anywhere;
 }
 
-.map-legend i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #497a4e;
+.leaflet-popup-content {
+    margin: 11px 13px;
 }
 
-.map-legend .legend-center {
-    background: #b84234;
+.leaflet-container a {
+    color: var(--forest-mid);
+}
+
+@media (max-width: 640px) {
+    .map-canvas {
+        height: 210px;
+    }
+
+    .hotspot-map {
+        height: 100%;
+    }
 }
 
 .panel-foot,
@@ -1657,14 +1586,9 @@ a {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .map-canvas,
-    .map-art {
+    .map-canvas {
         min-height: 210px;
         height: 210px;
-    }
-
-    .map-legend {
-        display: none;
     }
 
     .analysis-aside,
