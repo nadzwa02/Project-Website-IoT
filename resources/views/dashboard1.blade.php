@@ -80,8 +80,8 @@
                 </article>
                 <article class="stat-card stat-camera">
                     <div class="stat-heading"><span class="stat-icon" aria-hidden="true">▣</span><span>STATUS KAMERA</span></div>
-                    <p class="stat-value stat-value-text">BELUM AKTIF</p>
-                    <p class="stat-foot"><span class="status-dot status-dot-muted"></span> Menunggu koneksi</p>
+                    <p class="stat-value stat-value-text" id="stat-camera-status">BELUM AKTIF</p>
+                    <p class="stat-foot" id="stat-camera-foot"><span class="status-dot status-dot-muted"></span> Menunggu koneksi</p>
                 </article>
                 <article class="stat-card stat-risk">
                     <div class="stat-heading"><span class="stat-icon" aria-hidden="true">◇</span><span>TINGKAT RISIKO</span></div>
@@ -91,12 +91,14 @@
             </section>
 
             <section class="overview-grid">
+                <!-- Panel Kamera (Live Stream di Kiri) -->
                 <article class="panel camera-panel" id="kamera">
                     <div class="panel-heading">
                         <div>
                             <p class="eyebrow">PENGAWASAN VISUAL</p>
                             <h2>Kamera Hutan</h2>
                         </div>
+<<<<<<< HEAD
                         <span class="camera-state" data-camera-state><i></i><span data-camera-state-label>OFFLINE</span></span>
                     </div>
                     <div class="camera-controls">
@@ -139,9 +141,65 @@
                     <div class="camera-caption" data-camera-caption>
                         <span data-camera-caption-status><i></i> Tidak ada sinyal kamera</span>
                         <span data-camera-updated>TERAKHIR DIPERBARUI —</span>
+=======
+                        <div class="camera-controls">
+                            <!-- Dropdown Pemilihan Kamera -->
+                            <select id="camera-device-select" class="camera-select" title="Pilih sumber kamera">
+                                <option value="">Pilih Kamera...</option>
+                            </select>
+                            <button id="btn-toggle-camera" type="button" class="btn-camera">
+                                📷 Buka Kamera
+                            </button>
+                            <button id="btn-fullscreen-camera" type="button" class="btn-fullscreen" title="Tampilkan Layar Penuh">
+                                ⛶ Layar Penuh
+                            </button>
+                            <span class="camera-state" id="camera-badge"><i></i> OFFLINE</span>
+                        </div>
+                    </div>
+                    <div class="camera-scene" id="camera-container" role="region" aria-label="Area live stream kamera">
+                        <video id="live-video" class="camera-video-feed" autoplay playsinline muted></video>
+                        <canvas id="live-canvas" class="camera-canvas-overlay"></canvas>
+
+                        <div id="camera-placeholder">
+                            <svg viewBox="0 0 520 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b9c9ad"/><stop offset="1" stop-color="#e4d9ac"/></linearGradient>
+                                    <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#687a54"/><stop offset="1" stop-color="#344b38"/></linearGradient>
+                                    <linearGradient id="forest" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#617148"/><stop offset="1" stop-color="#243d2b"/></linearGradient>
+                                </defs>
+                                <rect width="520" height="280" fill="url(#sky)"/>
+                                <circle cx="407" cy="57" r="25" fill="#efe4b9" opacity=".8"/>
+                                <path d="M0 152 77 91l53 44 72-77 78 87 70-61 67 65 54-41 49 37v135H0Z" fill="#889173" opacity=".7"/>
+                                <path d="m0 173 88-64 61 51 77-84 91 89 55-55 65 50 49-41 34 29v132H0Z" fill="url(#ridge)"/>
+                                <path d="M0 189q91-44 168-11t155-3 197 8v97H0Z" fill="#9a9564"/>
+                                <path d="M0 211q79-38 169-4t174-9 177 1v81H0Z" fill="url(#forest)"/>
+                                <g fill="#263d2d">
+                                    <path d="m27 222 18-61 18 61h-12l18 42H20l18-42Zm70 1 19-72 20 72h-13l18 42H80l18-42Zm278-13 22-70 23 70h-15l21 49h-56l20-49Zm81 4 18-61 20 61h-12l18 42h-50l18-42Z"/>
+                                </g>
+                                <path d="M0 263q106-19 194 0t178-3 148 0v20H0Z" fill="#1e3426" opacity=".8"/>
+                            </svg>
+                            <div class="camera-message">
+                                <span class="camera-message-icon" aria-hidden="true">▣</span>
+                                <strong>Kamera belum terhubung</strong>
+                                <small>Pilih kamera pada menu dropdown lalu klik "Buka Kamera".</small>
+                            </div>
+                        </div>
+
+                        <div class="scene-overlay">
+                            <span class="record-dot" id="live-rec-dot"></span>
+                            <span id="live-feed-text">OFFLINE</span>
+                            <span id="ai-status-badge" class="ai-badge">AI: STANDBY</span>
+                            <span>CAM-01</span>
+                        </div>
+                    </div>
+                    <div class="camera-caption">
+                        <span id="camera-footer-status"><i></i> Tidak ada sinyal kamera</span>
+                        <span id="camera-last-update">TERAKHIR DIPERBARUI —</span>
+>>>>>>> d23f08c4ea981de28795f8809ed1d91216b3a7a3
                     </div>
                 </article>
 
+                <!-- Panel Peta (Peta Taktis di Kanan) -->
                 <article class="panel map-panel" id="peta">
                     <div class="panel-heading">
                         <div>
@@ -304,28 +362,9 @@
         </main>
 
         <footer class="site-footer">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <strong>JALAS</strong>
-                    <span>// JAGA ALAS COMMAND CENTER</span>
-                </div>
-                <p class="footer-description">Sistem komando dan pemantauan telemetri kebakaran hutan terintegrasi. Dirancang untuk stasiun<br class="footer-description-break"> pengawas lapangan, jagawana, dan badan penanggulangan bencana regional.</p>
-                <small class="footer-meta">© 2025 JALAS FORESTRY INITIATIVE <span>•</span> TELEMETRI LORAWAN FREQ: 915.00 MHZ <span>•</span> REFRESH CYCLE: 5 DETIK</small>
-            </div>
-
-            <aside class="footer-contact" aria-label="Informasi kontak darurat dan koordinasi">
-                <div class="footer-hotline">
-                    <span class="footer-hotline-icon" aria-hidden="true">✱</span>
-                    <div class="footer-contact-copy">
-                        <strong class="footer-contact-label">HOTLINE SIAGA DARURAT KARHUTLA</strong>
-                        <p class="footer-hotline-number"><a href="tel:117">117</a><span>/</span><a href="tel:+62761582901">(0761) 582-901</a></p>
-                    </div>
-                </div>
-                <div class="footer-coordination">
-                    <strong class="footer-contact-label">POSKO INDUK KOORDINASI</strong>
-                    <span>Sektor Riau <span>•</span> Pos Ranger Rimba 03</span>
-                </div>
-            </aside>
+            <div class="footer-brand"><strong>JALAS<span>.</span></strong><span>Forest Fire Early Warning &amp; Monitoring System</span></div>
+            <p>Dashboard pemantauan potensi kebakaran hutan <span>·</span> Informasi ditampilkan sesuai data perangkat yang tersedia.</p>
+            <a href="#dashboard" class="back-to-top">Kembali ke atas ↑</a>
         </footer>
     </div>
 </body>

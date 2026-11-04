@@ -1,3 +1,5 @@
+import { initializeLiveCamera } from './camera.js';
+
 const timeFormatter = new Intl.DateTimeFormat('id-ID', {
     hour: '2-digit',
     minute: '2-digit',
@@ -50,6 +52,7 @@ function initializeDashboardNavigation() {
     });
 }
 
+<<<<<<< HEAD
 function initializeForestCamera() {
     const cameraState = document.querySelector('[data-camera-state]');
     const cameraStateLabel = document.querySelector('[data-camera-state-label]');
@@ -479,3 +482,12 @@ updateDashboardClock();
 window.setInterval(updateDashboardClock, 1000);
 initializeDashboardNavigation();
 initializeForestCamera();
+=======
+// Inisialisasi komponen dashboard
+updateDashboardClock();
+window.setInterval(updateDashboardClock, 1000);
+initializeDashboardNavigation();
+
+// Inisialisasi modul kamera & live deteksi AI
+initializeLiveCamera();
+>>>>>>> d23f08c4ea981de28795f8809ed1d91216b3a7a3
