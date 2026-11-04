@@ -97,10 +97,22 @@
                             <p class="eyebrow">PENGAWASAN VISUAL</p>
                             <h2>Kamera Hutan</h2>
                         </div>
-                        <span class="camera-state"><i></i> OFFLINE</span>
+                        <span class="camera-state" data-camera-state><i></i><span data-camera-state-label>OFFLINE</span></span>
                     </div>
-                    <div class="camera-scene" role="img" aria-label="Ilustrasi lanskap hutan, kamera belum terhubung">
-                        <svg viewBox="0 0 520 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                    <div class="camera-controls">
+                        <label for="camera-device">Kamera laptop / USB</label>
+                        <select id="camera-device" data-camera-device>
+                            <option value="">Kamera default browser</option>
+                        </select>
+                        <button class="camera-toggle" type="button" data-camera-toggle>Aktifkan kamera</button>
+                    </div>
+                    <p class="camera-feedback" data-camera-feedback role="status" aria-live="polite">
+                        Pilih kamera, lalu tekan Aktifkan kamera dan izinkan akses saat diminta browser.
+                    </p>
+                    <div class="camera-scene" role="group" aria-label="Pratinjau kamera hutan">
+                        <video class="camera-video" data-camera-video aria-label="Tayangan langsung kamera hutan" autoplay muted playsinline hidden></video>
+                        <canvas class="camera-detections" data-camera-detections aria-hidden="true" hidden></canvas>
+                        <svg data-camera-placeholder viewBox="0 0 520 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                             <defs>
                                 <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b9c9ad"/><stop offset="1" stop-color="#e4d9ac"/></linearGradient>
                                 <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#687a54"/><stop offset="1" stop-color="#344b38"/></linearGradient>
@@ -117,14 +129,17 @@
                             </g>
                             <path d="M0 263q106-19 194 0t178-3 148 0v20H0Z" fill="#1e3426" opacity=".8"/>
                         </svg>
-                        <div class="scene-overlay"><span class="record-dot"></span> LIVE FEED <span>CAM-01</span></div>
-                        <div class="camera-message">
+                        <div class="scene-overlay" data-camera-overlay hidden><span class="record-dot"></span> LIVE FEED <span>CAM-01</span></div>
+                        <div class="camera-message" data-camera-placeholder-message>
                             <span class="camera-message-icon" aria-hidden="true">▣</span>
                             <strong>Kamera belum terhubung</strong>
-                            <small>Tampilan siaran akan tersedia setelah perangkat aktif.</small>
+                            <small>Gunakan kamera laptop atau kamera USB yang terhubung ke perangkat ini.</small>
                         </div>
                     </div>
-                    <div class="camera-caption"><span><i></i> Tidak ada sinyal kamera</span><span>TERAKHIR DIPERBARUI —</span></div>
+                    <div class="camera-caption" data-camera-caption>
+                        <span data-camera-caption-status><i></i> Tidak ada sinyal kamera</span>
+                        <span data-camera-updated>TERAKHIR DIPERBARUI —</span>
+                    </div>
                 </article>
 
                 <article class="panel map-panel" id="peta">
@@ -152,6 +167,15 @@
                         <div class="map-scale"><span></span><small>Ilustrasi · lokasi belum terhubung</small></div>
                         <div class="map-legend"><span><i class="legend-sensor"></i> Sensor</span><span><i class="legend-center"></i> Titik pantau</span></div>
                     </div>
+                    <section class="map-detection-status is-idle" data-detection-status role="status" aria-live="polite">
+                        <span class="detection-status-icon" data-detection-status-icon aria-hidden="true">!</span>
+                        <div class="detection-status-copy">
+                            <p class="eyebrow">HASIL DETEKSI KAMERA</p>
+                            <h3 data-detection-status-title>Kamera belum aktif</h3>
+                            <p data-detection-status-detail>Aktifkan kamera untuk memulai deteksi api dan asap otomatis.</p>
+                        </div>
+                        <span class="detection-status-time" data-detection-status-time>MENUNGGU</span>
+                    </section>
                     <div class="panel-foot"><span>⌖ Lokasi perangkat akan muncul saat sensor terhubung</span><span class="foot-muted">PETA ILUSTRATIF</span></div>
                 </article>
             </section>
