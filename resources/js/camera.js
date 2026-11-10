@@ -1,7 +1,9 @@
 /**
- * Live Camera & YOLO11 Object Detection Module (Optimized + Fullscreen)
+ * Shared Live Stream & YOLO11 Object Detection Module
+ * Semua pengunjung melihat live stream dan status deteksi yang sama dari server Python.
  */
 export function initializeLiveCamera() {
+    const streamImg = document.getElementById('live-stream');
     const video = document.getElementById('live-video');
     const canvas = document.getElementById('live-canvas');
     const toggleBtn = document.getElementById('btn-toggle-camera');
@@ -10,6 +12,7 @@ export function initializeLiveCamera() {
     const cameraSelect = document.getElementById('camera-device-select');
     const placeholder = document.getElementById('camera-placeholder');
     const cameraBadge = document.getElementById('camera-badge');
+    const cameraCaption = document.querySelector('.camera-caption');
     const recDot = document.getElementById('live-rec-dot');
     const feedText = document.getElementById('live-feed-text');
     const aiStatusBadge = document.getElementById('ai-status-badge');
@@ -18,14 +21,27 @@ export function initializeLiveCamera() {
     const statCameraStatus = document.getElementById('stat-camera-status');
     const statCameraFoot = document.getElementById('stat-camera-foot');
 
-    if (!video || !toggleBtn) return;
+    // Elemen Hasil Deteksi di Bawah Maps
+    const detectionStatus = document.querySelector('[data-detection-status]');
+    const detectionStatusIcon = document.querySelector('[data-detection-status-icon]');
+    const detectionStatusTitle = document.querySelector('[data-detection-status-title]');
+    const detectionStatusDetail = document.querySelector('[data-detection-status-detail]');
+    const detectionStatusTime = document.querySelector('[data-detection-status-time]');
 
-    let mediaStream = null;
-    let isPredicting = false;
-    let isCameraRunning = false;
-    let offscreenCanvas = null;
-    let offscreenCtx = null;
-    const FLASK_API_URL = 'http://127.0.0.1:5000/api/predict';
+    // Elemen Log Peringatan Dini
+    const activityCameraIcon = document.getElementById('activity-camera-icon');
+    const activityCameraTitle = document.getElementById('activity-camera-title');
+    const activityCameraDesc = document.getElementById('activity-camera-desc');
+    const activityCameraTime = document.getElementById('activity-camera-time');
+
+    if (!streamImg || !toggleBtn) return;
+
+    const host = window.location.hostname || '127.0.0.1';
+    const API_BASE = `http://${host}:5000`;
+
+    let isStreamActive = false;
+    let currentCameraIndex = 0;
+    let isToggling = false;
 
     const timeFormatter = new Intl.DateTimeFormat('id-ID', {
         hour: '2-digit',
@@ -35,6 +51,70 @@ export function initializeLiveCamera() {
         timeZone: 'Asia/Jakarta',
     });
 
+    // Pastikan video/canvas lama disembunyikan agar tidak merusak tampilan awal
+    if (video) video.hidden = true;
+    if (canvas) canvas.hidden = true;
+
+    function updateMapDetectionStatusBar(state, title, detail, timeText = null) {
+        if (!detectionStatus) return;
+
+        detectionStatus.className = `map-detection-status is-${state}`;
+        if (detectionStatusIcon) {
+            detectionStatusIcon.textContent = {
+                idle: '!',
+                checking: '…',
+                clear: '✓',
+                smoke: '!',
+                fire: '!',
+                error: '×',
+            }[state] || '!';
+        }
+
+        if (detectionStatusTitle) detectionStatusTitle.textContent = title;
+        if (detectionStatusDetail) detectionStatusDetail.textContent = detail;
+        if (detectionStatusTime) {
+            if (timeText) {
+                detectionStatusTime.textContent = timeText;
+            } else {
+                detectionStatusTime.textContent = state === 'idle'
+                    ? 'MENUNGGU'
+                    : `DIPERBARUI ${timeFormatter.format(new Date())} WIB`;
+            }
+        }
+    }
+
+    function updateActivityLog(state, fireCount = 0, smokeCount = 0) {
+        if (!activityCameraTitle || !activityCameraDesc || !activityCameraIcon || !activityCameraTime) {
+            return;
+        }
+
+        if (state === 'offline') {
+            activityCameraIcon.className = 'activity-icon activity-icon-muted';
+            activityCameraIcon.textContent = '▣';
+            activityCameraTitle.textContent = 'Kamera belum terhubung';
+            activityCameraDesc.textContent = 'Siaran kamera akan tampil saat perangkat tersedia.';
+            activityCameraTime.textContent = 'MENUNGGU';
+        } else if (state === 'fire') {
+            activityCameraIcon.className = 'activity-icon activity-icon-amber';
+            activityCameraIcon.textContent = '!';
+            activityCameraTitle.textContent = `Peringatan: ${fireCount} Titik Api Terdeteksi`;
+            activityCameraDesc.textContent = 'Kamera mendeteksi adanya titik api pada area pemantauan.';
+            activityCameraTime.textContent = 'DARURAT';
+        } else if (state === 'smoke') {
+            activityCameraIcon.className = 'activity-icon activity-icon-amber';
+            activityCameraIcon.textContent = '!';
+            activityCameraTitle.textContent = `Waspada: ${smokeCount} Kepulan Asap Terdeteksi`;
+            activityCameraDesc.textContent = 'Kamera mendeteksi indikasi asap pada area pemantauan.';
+            activityCameraTime.textContent = 'SIAGA';
+        } else {
+            activityCameraIcon.className = 'activity-icon activity-icon-green';
+            activityCameraIcon.textContent = '✓';
+            activityCameraTitle.textContent = 'Kamera pemantauan aktif (Live)';
+            activityCameraDesc.textContent = 'Siaran langsung dan deteksi AI berjalan normal.';
+            activityCameraTime.textContent = 'AKTIF';
+        }
+    }
+
     // Fitur Fullscreen
     if (fullscreenBtn && cameraContainer) {
         fullscreenBtn.addEventListener('click', () => {
@@ -43,166 +123,133 @@ export function initializeLiveCamera() {
                     cameraContainer.requestFullscreen();
                 } else if (cameraContainer.webkitRequestFullscreen) {
                     cameraContainer.webkitRequestFullscreen();
-                } else if (cameraContainer.msRequestFullscreen) {
-                    cameraContainer.msRequestFullscreen();
                 }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
             }
         });
 
         document.addEventListener('fullscreenchange', () => {
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = '⛶ Keluar Fullscreen';
-            } else {
-                fullscreenBtn.textContent = '⛶ Layar Penuh';
-            }
+            fullscreenBtn.textContent = document.fullscreenElement
+                ? '⛶ Keluar Fullscreen'
+                : '⛶ Layar Penuh';
         });
     }
 
-    // Populate daftar perangkat kamera yang tersedia
-    async function loadCameraDevices() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices || !cameraSelect) {
-            return;
-        }
+    // Muat daftar kamera yang terhubung ke Server Python
+    async function loadServerCameras() {
+        if (!cameraSelect) return;
 
         try {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const res = await fetch(`${API_BASE}/api/cameras`);
+            if (!res.ok) throw new Error('Gagal memuat kamera');
+            const data = await res.json();
+            const cameras = data.cameras || [];
 
-            const currentSelected = cameraSelect.value;
             cameraSelect.innerHTML = '';
-
-            if (videoDevices.length === 0) {
+            cameras.forEach((cam) => {
                 const opt = document.createElement('option');
-                opt.value = '';
-                opt.textContent = 'Tidak ada kamera ditemukan';
-                cameraSelect.appendChild(opt);
-                return;
-            }
-
-            videoDevices.forEach((device, index) => {
-                const opt = document.createElement('option');
-                opt.value = device.deviceId;
-                opt.textContent = device.label || `Kamera ${index + 1}`;
-                if (device.deviceId === currentSelected) {
+                opt.value = String(cam.index);
+                opt.textContent = cam.label;
+                if (Number(cam.index) === Number(data.active_camera)) {
                     opt.selected = true;
                 }
                 cameraSelect.appendChild(opt);
             });
-        } catch (err) {
-            console.warn('Gagal memuat daftar perangkat kamera:', err);
+        } catch {
+            if (cameraSelect.options.length <= 1) {
+                cameraSelect.innerHTML = `
+                    <option value="0">Kamera 0 - Default / Internal</option>
+                    <option value="1">Kamera 1 - USB / Eksternal</option>
+                `;
+            }
         }
     }
 
+    // Ganti kamera saat dropdown diubah
     if (cameraSelect) {
         cameraSelect.addEventListener('change', async () => {
-            if (mediaStream) {
-                stopCameraTracksOnly();
-                await startCamera(cameraSelect.value);
+            const selectedIdx = Number(cameraSelect.value || 0);
+            if (isStreamActive) {
+                await startSharedStream(selectedIdx);
             }
         });
     }
 
+    // Tombol Buka / Matikan Kamera
     toggleBtn.addEventListener('click', async () => {
-        if (isCameraRunning) {
-            stopCamera();
+        if (isToggling) return;
+        if (isStreamActive) {
+            await stopSharedStream();
         } else {
-            await startCamera(cameraSelect ? cameraSelect.value : null);
+            const selectedIdx = cameraSelect ? Number(cameraSelect.value || 0) : 0;
+            await startSharedStream(selectedIdx);
         }
     });
 
-    async function startCamera(deviceId = null) {
+    async function startSharedStream(cameraIndex = 0) {
         try {
+            isToggling = true;
             toggleBtn.disabled = true;
             toggleBtn.textContent = 'Menghubungkan...';
+            updateMapDetectionStatusBar('checking', 'Menghubungkan kamera...', 'Membuka live stream dari server AI YOLO11...');
 
-            const videoConstraints = {
-                width: { ideal: 640 },
-                height: { ideal: 480 }
-            };
-
-            if (deviceId) {
-                videoConstraints.deviceId = { exact: deviceId };
-            }
-
-            mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: videoConstraints,
-                audio: false
+            const res = await fetch(`${API_BASE}/api/stream/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ camera_index: cameraIndex }),
             });
 
-            video.srcObject = mediaStream;
-            await video.play();
-
-            isCameraRunning = true;
-
-            offscreenCanvas = document.createElement('canvas');
-            offscreenCanvas.width = 320;
-            offscreenCanvas.height = 240;
-            offscreenCtx = offscreenCanvas.getContext('2d');
-
-            await loadCameraDevices();
-
-            video.classList.remove('hidden');
-            video.style.display = 'block';
-            canvas.classList.remove('hidden');
-            canvas.style.display = 'block';
-            if (placeholder) placeholder.style.display = 'none';
-
-            toggleBtn.disabled = false;
-            toggleBtn.textContent = '⏹ Matikan Kamera';
-            toggleBtn.classList.add('is-active');
-
-            if (cameraBadge) {
-                cameraBadge.innerHTML = '<i></i> ONLINE';
-                cameraBadge.classList.add('camera-badge-online');
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || 'Gagal membuka kamera di server.');
             }
 
-            if (recDot) recDot.classList.add('record-dot-active');
-            if (feedText) feedText.textContent = 'LIVE FEED';
-            if (footerStatus) footerStatus.innerHTML = '<i></i> Kamera terhubung (Live)';
-            if (statCameraStatus) statCameraStatus.textContent = 'ONLINE';
-            if (statCameraFoot) {
-                statCameraFoot.innerHTML = '<span class="status-dot status-dot-green"></span> Live Stream Aktif';
-            }
-
-            scheduleNextPrediction();
-
+            applyStreamState(data, true);
         } catch (err) {
-            console.error('Gagal mengakses kamera:', err);
-            alert('Tidak dapat mengakses kamera: ' + err.message);
-            stopCamera();
+            console.error('Gagal memulai stream:', err);
+            alert('Gagal mengaktifkan kamera: ' + (err.message || 'Pastikan server Python Flask berjalan di port 5000.'));
+            updateMapDetectionStatusBar(
+                'error',
+                'Gagal Membuka Kamera',
+                err.message || 'Pastikan python_api/app.py sudah dijalankan.'
+            );
+        } finally {
+            isToggling = false;
             toggleBtn.disabled = false;
-            toggleBtn.textContent = '📷 Buka Kamera';
         }
     }
 
-    function stopCameraTracksOnly() {
-        if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
-            mediaStream = null;
+    async function stopSharedStream() {
+        try {
+            isToggling = true;
+            toggleBtn.disabled = true;
+            await fetch(`${API_BASE}/api/stream/stop`, { method: 'POST' });
+            applyOfflineUI();
+        } catch (err) {
+            console.error('Gagal menghentikan stream:', err);
+        } finally {
+            isToggling = false;
+            toggleBtn.disabled = false;
         }
     }
 
-    function stopCamera() {
-        isCameraRunning = false;
-        stopCameraTracksOnly();
+    function applyOfflineUI() {
+        isStreamActive = false;
 
-        video.pause();
-        video.srcObject = null;
-        video.style.display = 'none';
-        canvas.style.display = 'none';
-        if (placeholder) placeholder.style.display = 'block';
+        streamImg.removeAttribute('src');
+        streamImg.hidden = true;
+        if (placeholder) placeholder.hidden = false;
 
-        toggleBtn.disabled = false;
         toggleBtn.textContent = '📷 Buka Kamera';
         toggleBtn.classList.remove('is-active');
 
         if (cameraBadge) {
             cameraBadge.innerHTML = '<i></i> OFFLINE';
-            cameraBadge.classList.remove('camera-badge-online');
+            cameraBadge.classList.remove('camera-badge-online', 'is-active');
+        }
+        if (cameraCaption) {
+            cameraCaption.classList.remove('is-active');
         }
 
         if (recDot) recDot.classList.remove('record-dot-active');
@@ -217,118 +264,135 @@ export function initializeLiveCamera() {
             statCameraFoot.innerHTML = '<span class="status-dot status-dot-muted"></span> Menunggu koneksi';
         }
 
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        updateMapDetectionStatusBar(
+            'idle',
+            'Kamera belum aktif',
+            'Aktifkan kamera untuk memulai deteksi api dan asap otomatis.'
+        );
+        updateActivityLog('offline');
     }
 
-    function scheduleNextPrediction() {
-        if (!isCameraRunning) return;
-        setTimeout(async () => {
-            if (!isCameraRunning) return;
-            await captureAndPredict();
-            scheduleNextPrediction();
-        }, 150);
-    }
-
-    async function captureAndPredict() {
-        if (isPredicting || !isCameraRunning || video.videoWidth === 0) return;
-        isPredicting = true;
-
-        try {
-            if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
+    function applyStreamState(data, forceReloadStream = false) {
+        if (!data.running) {
+            if (isStreamActive) {
+                applyOfflineUI();
             }
-
-            offscreenCtx.drawImage(video, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
-
-            const blob = await new Promise(resolve => offscreenCanvas.toBlob(resolve, 'image/jpeg', 0.65));
-            if (!blob) {
-                isPredicting = false;
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('image', blob, 'frame.jpg');
-            formData.append('confidence', '0.30');
-            formData.append('imgsz', '320');
-
-            const response = await fetch(FLASK_API_URL, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            drawDetections(data);
-
-            if (lastUpdate) {
-                const now = new Date();
-                lastUpdate.textContent = `TERAKHIR DIPERBARUI — ${timeFormatter.format(now)} WIB`;
-            }
-
-        } catch (err) {
-            if (aiStatusBadge) {
-                aiStatusBadge.className = 'ai-badge ai-badge-error';
-                aiStatusBadge.textContent = 'AI: OFFLINE (Flask?)';
-            }
-        } finally {
-            isPredicting = false;
+            return;
         }
-    }
 
-    function drawDetections(data) {
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const switchedCamera = currentCameraIndex !== Number(data.camera_index);
+        currentCameraIndex = Number(data.camera_index || 0);
 
-        const detections = data.detections || [];
+        if (cameraSelect && String(cameraSelect.value) !== String(currentCameraIndex)) {
+            cameraSelect.value = String(currentCameraIndex);
+        }
+
+        // Tampilkan MJPEG live stream jika baru aktif atau ganti kamera
+        if (!isStreamActive || forceReloadStream || switchedCamera) {
+            isStreamActive = true;
+            if (placeholder) placeholder.hidden = true;
+            streamImg.hidden = false;
+            streamImg.src = `${API_BASE}/api/stream?t=${Date.now()}`;
+        }
+
+        toggleBtn.textContent = '⏹ Matikan Kamera';
+        toggleBtn.classList.add('is-active');
+
+        if (cameraBadge) {
+            cameraBadge.innerHTML = '<i></i> ONLINE';
+            cameraBadge.classList.add('camera-badge-online', 'is-active');
+        }
+        if (cameraCaption) {
+            cameraCaption.classList.add('is-active');
+        }
+
+        if (recDot) recDot.classList.add('record-dot-active');
+        if (feedText) feedText.textContent = 'LIVE STREAM';
+        if (footerStatus) footerStatus.innerHTML = '<i></i> Kamera terhubung (Live Stream Bersama)';
+        if (statCameraStatus) statCameraStatus.textContent = 'ONLINE';
+        if (statCameraFoot) {
+            statCameraFoot.innerHTML = '<span class="status-dot status-dot-green"></span> Live Stream Aktif';
+        }
+
+        const timeStr = data.updated_at ? `${data.updated_at} WIB` : `${timeFormatter.format(new Date())} WIB`;
+        if (lastUpdate) {
+            lastUpdate.textContent = `TERAKHIR DIPERBARUI — ${timeStr}`;
+        }
+
         const status = data.status || 'safe';
+        const fireCount = data.summary?.fire || 0;
+        const smokeCount = data.summary?.smoke || 0;
 
         if (aiStatusBadge) {
             if (status === 'fire') {
                 aiStatusBadge.className = 'ai-badge ai-badge-fire';
-                aiStatusBadge.textContent = `🔥 API: FIRE (${data.summary?.fire || 1})`;
+                aiStatusBadge.textContent = `🔥 API: FIRE (${fireCount})`;
             } else if (status === 'smoke') {
                 aiStatusBadge.className = 'ai-badge ai-badge-smoke';
-                aiStatusBadge.textContent = `💨 API: SMOKE (${data.summary?.smoke || 1})`;
+                aiStatusBadge.textContent = `💨 API: SMOKE (${smokeCount})`;
             } else {
                 aiStatusBadge.className = 'ai-badge ai-badge-safe';
                 aiStatusBadge.textContent = 'AI: NORMAL (AMAN)';
             }
         }
 
-        const scaleX = video.videoWidth / offscreenCanvas.width;
-        const scaleY = video.videoHeight / offscreenCanvas.height;
-
-        detections.forEach(det => {
-            const x1 = det.bbox.x1 * scaleX;
-            const y1 = det.bbox.y1 * scaleY;
-            const x2 = det.bbox.x2 * scaleX;
-            const y2 = det.bbox.y2 * scaleY;
-            const width = x2 - x1;
-            const height = y2 - y1;
-            const isFire = det.class_name.toLowerCase().includes('fire');
-
-            const color = isFire ? '#ff2a00' : '#ffa500';
-
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = color;
-            ctx.strokeRect(x1, y1, width, height);
-
-            const label = `${det.class_name.toUpperCase()} ${(det.confidence * 100).toFixed(0)}%`;
-            ctx.font = 'bold 14px Inter, sans-serif';
-            const textWidth = ctx.measureText(label).width;
-
-            ctx.fillStyle = color;
-            ctx.fillRect(x1, Math.max(0, y1 - 22), textWidth + 10, 22);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText(label, x1 + 5, Math.max(16, y1 - 6));
-        });
+        if (status === 'fire') {
+            updateMapDetectionStatusBar(
+                'fire',
+                '🔥 Terdeteksi Titik Api!',
+                `Kamera mendeteksi ${fireCount} titik api secara real-time melalui model YOLO11.`,
+                `DIPERBARUI ${timeStr}`
+            );
+            updateActivityLog('fire', fireCount, smokeCount);
+        } else if (status === 'smoke') {
+            updateMapDetectionStatusBar(
+                'smoke',
+                '💨 Terdeteksi Kepulan Asap!',
+                `Kamera mendeteksi ${smokeCount} indikasi kepulan asap pada area pantau.`,
+                `DIPERBARUI ${timeStr}`
+            );
+            updateActivityLog('smoke', fireCount, smokeCount);
+        } else {
+            updateMapDetectionStatusBar(
+                'clear',
+                '✓ Area Terpantau Aman (Kamera Aktif)',
+                'Live stream kamera berjalan normal. Tidak terdeteksi api maupun kepulan asap.',
+                `DIPERBARUI ${timeStr}`
+            );
+            updateActivityLog('safe');
+        }
     }
 
-    loadCameraDevices();
+    async function pollStreamStatus() {
+        if (isToggling) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/api/stream/status`);
+            if (!res.ok) throw new Error('Status error');
+            const data = await res.json();
+            applyStreamState(data, false);
+        } catch {
+            // Jika server Flask belum menyala
+            if (isStreamActive) {
+                applyOfflineUI();
+            }
+        }
+    }
+
+    // Jika stream gambar terputus sementara, coba muat ulang jika status masih running
+    streamImg.addEventListener('error', () => {
+        if (isStreamActive) {
+            setTimeout(() => {
+                if (isStreamActive) {
+                    streamImg.src = `${API_BASE}/api/stream?t=${Date.now()}`;
+                }
+            }, 1500);
+        }
+    });
+
+    // Inisialisasi awal
+    applyOfflineUI();
+    loadServerCameras();
+    pollStreamStatus();
+    window.setInterval(pollStreamStatus, 1000);
 }

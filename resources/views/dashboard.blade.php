@@ -115,8 +115,9 @@
                         </div>
                     </div>
                     <div class="camera-scene" id="camera-container" role="region" aria-label="Area live stream kamera">
-                        <video id="live-video" class="camera-video-feed" autoplay playsinline muted></video>
-                        <canvas id="live-canvas" class="camera-canvas-overlay"></canvas>
+                        <img id="live-stream" class="camera-video-feed" alt="Live stream kamera hutan" hidden>
+                        <video id="live-video" class="camera-video-feed" autoplay playsinline muted hidden></video>
+                        <canvas id="live-canvas" class="camera-canvas-overlay" hidden></canvas>
 
                         <div id="camera-placeholder">
                             <svg viewBox="0 0 520 280" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -268,7 +269,7 @@
                     <div class="activity-list">
                         <div class="activity-item"><span class="activity-icon activity-icon-green">✓</span><div><strong>Sistem pemantauan siap</strong><p>Dashboard berhasil dimuat dan siap menerima data.</p></div><time>SEKARANG</time></div>
                         <div class="activity-item"><span class="activity-icon activity-icon-amber">⌁</span><div><strong>Sensor belum mengirimkan data</strong><p>Pastikan perangkat dan koneksi sensor telah aktif.</p></div><time>MENUNGGU</time></div>
-                        <div class="activity-item"><span class="activity-icon activity-icon-muted">▣</span><div><strong>Kamera belum terhubung</strong><p>Siaran kamera akan tampil saat perangkat tersedia.</p></div><time>MENUNGGU</time></div>
+                        <div class="activity-item" id="activity-camera-item"><span class="activity-icon activity-icon-muted" id="activity-camera-icon">▣</span><div><strong id="activity-camera-title">Kamera belum terhubung</strong><p id="activity-camera-desc">Siaran kamera akan tampil saat perangkat tersedia.</p></div><time id="activity-camera-time">MENUNGGU</time></div>
                     </div>
                     <a class="text-link" href="#sensor">Lihat status seluruh perangkat <span aria-hidden="true">→</span></a>
                 </article>
