@@ -1,9 +1,11 @@
 from pathlib import Path
+import numpy as np
+import torch
 from ultralytics import YOLO
 
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "models" / "best.pt"
+MODEL_PATH = BASE_DIR / "models" / "fire-smoke-y11n.pt"
 
 
 class JalasDetector:
@@ -20,19 +22,28 @@ class JalasDetector:
                 f"Model tidak ditemukan: {MODEL_PATH}"
             )
 
+        self.device = 0 if torch.cuda.is_available() else "cpu"
         self.model = YOLO(str(MODEL_PATH))
 
         print("Model berhasil dimuat.")
+        print(f"Device: {self.device}")
         print(f"Classes: {self.model.names}")
+
+        # Warm-up model agar inferensi pertama tidak lag/stuttering
+        print("Menjalankan warm-up model...")
+        dummy = np.zeros((320, 320, 3), dtype=np.uint8)
+        self.model.predict(source=dummy, imgsz=320, device=self.device, verbose=False)
+        print("Warm-up selesai. Siap melakukan deteksi real-time.")
         print("===================================")
 
     def predict(self, image, confidence=0.25, imgsz=320):
 
-        # Gunakan imgsz 320 untuk inferensi CPU yang jauh lebih cepat
+        # Gunakan imgsz 320 untuk inferensi CPU yang optimal dan responsif
         results = self.model.predict(
             source=image,
             conf=confidence,
             imgsz=imgsz,
+            device=self.device,
             verbose=False
         )
 

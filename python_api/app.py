@@ -36,7 +36,7 @@ class SharedLiveStream:
         self.running = False
         self.camera_index = 0
         self.confidence = 0.20  # Diturunkan dari 0.30 agar api kecil/bergoyang tetap terdeteksi
-        self.imgsz = 416        # Naik dari 320 ke 416 agar resolusi api kecil lebih detail
+        self.imgsz = 320        # 320x320 optimal untuk inferensi cepat (~30ms) tanpa lag pada CPU
 
         self.cap = None
         self.raw_frame = None
@@ -65,8 +65,9 @@ class SharedLiveStream:
 
         if backend == cv2.CAP_DSHOW:
             cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        cap.set(cv2.CAP_PROP_FPS, 30)
 
         valid_frame = None
         for _ in range(12):
@@ -75,7 +76,7 @@ class SharedLiveStream:
                 valid_frame = frame
                 if float(np.mean(frame)) > 5.0:
                     break
-            time.sleep(0.03)
+            time.sleep(0.01)
 
         if valid_frame is None:
             cap.release()
@@ -140,7 +141,7 @@ class SharedLiveStream:
             self.updated_at = datetime.now().strftime("%H:%M:%S")
 
             annotated = self._draw_boxes(first_frame.copy(), [])
-            ok, buf = cv2.imencode(".jpg", annotated, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+            ok, buf = cv2.imencode(".jpg", annotated, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
             if ok:
                 self.jpeg_bytes = buf.tobytes()
                 self.frame_id += 1
@@ -218,7 +219,7 @@ class SharedLiveStream:
 
             ret, frame = cap.read()
             if not ret or frame is None:
-                time.sleep(0.04)
+                time.sleep(0.01)
                 continue
 
             with self.lock:
@@ -226,14 +227,14 @@ class SharedLiveStream:
                 current_detections = list(self.detections)
 
             annotated = self._draw_boxes(frame, current_detections)
-            ok, buf = cv2.imencode(".jpg", annotated, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+            ok, buf = cv2.imencode(".jpg", annotated, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
             if ok:
                 with self.frame_cond:
                     self.jpeg_bytes = buf.tobytes()
                     self.frame_id += 1
                     self.frame_cond.notify_all()
 
-            time.sleep(0.03)
+            time.sleep(0.005)
 
     def _inference_loop(self):
         while True:
@@ -245,7 +246,7 @@ class SharedLiveStream:
                 imgsz = self.imgsz
 
             if frame is None:
-                time.sleep(0.04)
+                time.sleep(0.01)
                 continue
 
             try:
@@ -282,7 +283,7 @@ class SharedLiveStream:
             except Exception as exc:
                 print(f"[ERROR] Inference loop: {exc}")
 
-            time.sleep(0.05)
+            time.sleep(0.005)
 
     def get_status(self):
         with self.lock:
@@ -409,7 +410,7 @@ def predict():
         }), 400
 
     confidence = request.form.get("confidence", default=0.20, type=float)
-    imgsz = request.form.get("imgsz", default=416, type=int)
+    imgsz = request.form.get("imgsz", default=320, type=int)
 
     detections = detector.predict(image=image, confidence=confidence, imgsz=imgsz)
 
