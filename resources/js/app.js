@@ -1,4 +1,5 @@
 import { initializeLiveCamera } from './camera.js';
+import { initializeSensorMonitor } from './sensor.js';
 
 const timeFormatter = new Intl.DateTimeFormat('id-ID', {
     hour: '2-digit',
@@ -37,6 +38,8 @@ function initializeDashboardNavigation() {
         return;
     }
 
+    const navLinks = navigation.querySelectorAll('.nav-link');
+
     toggle.addEventListener('click', () => {
         const isOpen = toggle.getAttribute('aria-expanded') === 'true';
 
@@ -45,11 +48,39 @@ function initializeDashboardNavigation() {
     });
 
     navigation.addEventListener('click', (event) => {
-        if (event.target instanceof Element && event.target.closest('.nav-link')) {
+        const clickedLink = event.target instanceof Element ? event.target.closest('.nav-link') : null;
+
+        if (clickedLink) {
+            navLinks.forEach((link) => link.classList.remove('is-active'));
+            clickedLink.classList.add('is-active');
             toggle.setAttribute('aria-expanded', 'false');
             navigation.classList.remove('is-open');
         }
     });
+
+    if ('IntersectionObserver' in window) {
+        const sections = Array.from(navLinks)
+            .map((link) => {
+                const href = link.getAttribute('href');
+                return href && href.startsWith('#') ? document.querySelector(href) : null;
+            })
+            .filter(Boolean);
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting) continue;
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach((link) => {
+                        link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+                    });
+                }
+            },
+            { rootMargin: '-35% 0px -55% 0px', threshold: 0 }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+    }
 }
 
 function getHotspotProperty(properties, keys) {
@@ -205,6 +236,7 @@ updateDashboardClock();
 window.setInterval(updateDashboardClock, 1000);
 initializeDashboardNavigation();
 
-// Inisialisasi modul kamera & live deteksi AI
+// Inisialisasi modul kamera, sensor MQTT & live deteksi AI
 initializeLiveCamera();
+initializeSensorMonitor();
 window.addEventListener('load', initializeHotspotMap, { once: true });

@@ -2,111 +2,101 @@
    LIVE CAMERA & AI PREDICTION STYLES
    ========================================================================== */
 
-/* Ubah grid agar Kamera di kiri (lebih lebar) dan Peta di kanan (lebih kecil) */
-.overview-grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr) !important;
-}
-
-@media (max-width: 1080px) {
-    .overview-grid {
-        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr) !important;
-    }
-}
-
-@media (max-width: 760px) {
-    .overview-grid {
-        grid-template-columns: 1fr !important;
-    }
-}
-
 .camera-controls {
-    display: flex !important;
+    display: flex;
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
-    padding: 0 !important;
-    border-bottom: none !important;
-    background: transparent !important;
 }
 
 .camera-select {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink, #263b2b);
-    background: #fff;
-    border: 1px solid var(--line, #d7ceaa);
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink, #14261d);
+    background: #ffffff;
+    border: 1px solid var(--line-strong, #c5d4cb);
     outline: none;
     cursor: pointer;
-    max-width: 190px;
+    max-width: 210px;
     text-overflow: ellipsis;
     white-space: nowrap;
+    box-shadow: 0 1px 2px rgb(13 35 24 / 4%);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.camera-select:hover {
+    border-color: var(--forest-light, #2e6f4e);
 }
 
 .camera-select:focus {
-    border-color: var(--forest, #193d2b);
+    border-color: var(--forest, #143625);
+    box-shadow: 0 0 0 3px rgb(46 111 78 / 15%);
 }
 
 .btn-camera,
 .btn-fullscreen {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 11px;
+    justify-content: center;
+    height: 36px;
+    gap: 6px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12.5px;
     cursor: pointer;
-    border: 1px solid #2e5e3d;
-    background: #2e5e3d;
+    border: 1px solid var(--forest-mid, #1f5138);
+    background: var(--forest-mid, #1f5138);
     color: #ffffff;
-    transition: background 0.2s, opacity 0.2s, transform 0.1s;
+    box-shadow: 0 1px 2px rgb(13 35 24 / 8%);
+    transition: all 150ms ease;
 }
 
 .btn-fullscreen {
-    border-color: var(--line, #d7ceaa);
-    background: #fff;
-    color: var(--ink, #263b2b);
+    border-color: var(--line-strong, #c5d4cb);
+    background: #ffffff;
+    color: var(--ink-secondary, #3d5246);
 }
 
 .btn-fullscreen:hover {
-    background: var(--surface-muted, #eee6c5);
+    border-color: var(--forest-light, #2e6f4e);
+    background: var(--surface-muted, #ebf1ed);
+    color: var(--ink, #14261d);
 }
 
 .btn-camera:hover {
-    background: #193d2b;
+    background: var(--forest, #143625);
+    border-color: var(--forest, #143625);
 }
 
 .btn-camera.is-active {
-    background: #b6382e;
-    border-color: #b6382e;
+    background: #dc2626;
+    border-color: #dc2626;
 }
 
 .btn-camera.is-active:hover {
-    background: #8e2b24;
+    background: #b91c1c;
+    border-color: #b91c1c;
 }
 
 .camera-badge-online {
-    color: #2e5e3d !important;
-    background: #e6f4ea !important;
-    border-color: #b7e1cd !important;
+    color: #166534 !important;
+    background: #dcfce7 !important;
+    border-color: #86efac !important;
 }
 
-.camera- badge-online i,
 .camera-badge-online i {
-    background: #2e5e3d !important;
-}
-
-.camera-scene {
-    position: relative;
-    overflow: hidden;
-    background: #243d2b;
+    background: #16a34a !important;
+    box-shadow: 0 0 0 3px rgb(22 163 74 / 20%);
 }
 
 #camera-placeholder {
     position: relative;
     width: 100%;
+    height: 100%;
 }
 
 #camera-placeholder[hidden] {
@@ -116,6 +106,8 @@
 #camera-placeholder > svg {
     display: block;
     width: 100%;
+    height: 100%;
+    min-height: 320px;
     aspect-ratio: 16 / 9;
 }
 
@@ -124,7 +116,7 @@
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
-    background: #111b14;
+    background: #0b1710;
 }
 
 .camera-video-feed[hidden] {
@@ -167,41 +159,65 @@
 }
 
 .record-dot {
-    opacity: 0.4;
+    opacity: 0.45;
 }
 
 .record-dot-active {
     opacity: 1 !important;
-    background: #ff3b30 !important;
-    box-shadow: 0 0 6px #ff3b30;
+    background: #ef4444 !important;
+    box-shadow: 0 0 8px #ef4444;
+    animation: pulse-dot 1.5s infinite ease-in-out;
 }
 
 .ai-badge {
-    background: rgba(0, 0, 0, 0.55);
-    padding: 2px 6px;
-    border-radius: 3px;
-    color: #fff;
-    font-size: 8px;
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px solid rgb(255 255 255 / 15%);
+    border-radius: 999px;
+    background: rgb(15 23 42 / 65%);
+    backdrop-filter: blur(8px);
+    color: #f8fafc;
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.05em;
 }
 
 .ai-badge-safe {
-    background: #2e5e3d !important;
-    color: #fff !important;
+    border-color: rgb(74 222 128 / 35%) !important;
+    background: rgb(21 128 61 / 85%) !important;
+    color: #ffffff !important;
 }
 
 .ai-badge-fire {
-    background: #d64d3e !important;
-    color: #fff !important;
+    border-color: rgb(252 165 165 / 40%) !important;
+    background: rgb(220 38 38 / 90%) !important;
+    color: #ffffff !important;
 }
 
 .ai-badge-smoke {
-    background: #e4b600 !important;
-    color: #000 !important;
+    border-color: rgb(253 224 71 / 45%) !important;
+    background: rgb(234 179 8 / 92%) !important;
+    color: #1c1917 !important;
 }
 
 .ai-badge-error {
-    background: #b6382e !important;
-    color: #fff !important;
+    background: rgb(185 28 28 / 90%) !important;
+    color: #ffffff !important;
+}
+
+@media (max-width: 560px) {
+    .camera-controls {
+        width: 100%;
+    }
+
+    .camera-select {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .btn-camera,
+    .btn-fullscreen {
+        flex: 1;
+    }
 }

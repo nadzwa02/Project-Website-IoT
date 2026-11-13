@@ -36,10 +36,10 @@ from ultralytics import YOLO
 # =========================================================
 # 1. KONFIGURASI
 # =========================================================
-MODEL_PATH = Path(r"D:\GitHub Dekstop\Project-Website-IoT\python_api\models\fire-smoke-y11n.pt")
+MODEL_PATH = Path(r"D:\GitHub Dekstop\Project-Website-IoT\python_api\models\best.pt")
 
 # Kamera eksternal
-CAMERA_INDEX = 1
+CAMERA_INDEX = 0
 
 # Confidence awal
 CONF_THRESHOLD = 0.25
